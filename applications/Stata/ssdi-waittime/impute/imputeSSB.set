@@ -1,0 +1,20 @@
+        title SSB Multiple Imputation;
+        datain ${mydata}/srmi_input${k};
+        dataout ../mydata/ssb_imputed${k}_1;
+        default continuous;
+*       continuous ;
+        categorical race hispanic foreign_born male educ_5cat state mbr_ssdi_dig_group_1 
+		mbr_ssdi_dig_group_2 mbr_ssdi_dig_group_3 mbr_ssdi_dig_group_4;
+*	mixed ;
+*       count ;
+        transfer personid initwgt halfsamp varstrat panel sipp_panel_beg_date;
+        bounds birthdate(<sipp_panel_beg_date) mbr_ssdi_ddo_1(>birthdate)
+                mbr_ssdi_ddo_2(>birthdate) mbr_ssdi_ddo_3(>birthdate) mbr_ssdi_ddo_4(>birthdate)
+                mbr_ssdi_dsd_1(>mbr_ssdi_ddo_1) mbr_ssdi_dsd_2(>mbr_ssdi_ddo_2)
+                mbr_ssdi_dsd_3(>mbr_ssdi_ddo_3) mbr_ssdi_dsd_4(>mbr_ssdi_ddo_4);
+*       restrict ;
+        interact race*male, hispanic*male, foreign_born*male;
+        iterations 5;
+        multiples 4;
+	seed 2001;
+run;

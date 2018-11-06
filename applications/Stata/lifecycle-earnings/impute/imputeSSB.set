@@ -1,0 +1,38 @@
+        title SSB Multiple Imputation;
+        datain ${mydata}/srmi_input${k};
+        dataout ../mydata/ssb_imputed${k}_1;
+        default continuous;
+*       continuous ;
+        categorical race hispanic foreign_born male educ_5cat;
+        mixed total_der_fica_1978 total_der_fica_1979 total_der_fica_1980 total_der_fica_1981
+                total_der_fica_1982 total_der_fica_1983 total_der_fica_1984 total_der_fica_1985
+                total_der_fica_1986 total_der_fica_1987 total_der_fica_1988 total_der_fica_1989
+                total_der_fica_1990 total_der_fica_1991 total_der_fica_1992 total_der_fica_1993
+                total_der_fica_1994 total_der_fica_1995 total_der_fica_1996 total_der_fica_1997
+                total_der_fica_1998 total_der_fica_1999 total_der_fica_2000 total_der_fica_2001
+                total_der_fica_2002 total_der_fica_2003 total_der_fica_2004 total_der_fica_2005
+                total_der_fica_2006 total_der_fica_2007 total_der_fica_2008 total_der_fica_2009
+                total_der_fica_2010 total_der_fica_2011 total_der_fica_2012 total_der_fica_2013
+                total_der_fica_2014;
+*       count ;
+        transfer personid initwgt halfsamp varstrat panel sipp_panel_beg_date;
+        bounds birthdate(<sipp_panel_beg_date)
+                total_der_fica_1978(>=0) total_der_fica_1979(>=0) total_der_fica_1980(>=0)
+                total_der_fica_1981(>=0) total_der_fica_1982(>=0) total_der_fica_1983(>=0)
+                total_der_fica_1984(>=0) total_der_fica_1985(>=0) total_der_fica_1986(>=0)
+                total_der_fica_1987(>=0) total_der_fica_1988(>=0) total_der_fica_1989(>=0)
+                total_der_fica_1990(>=0) total_der_fica_1991(>=0) total_der_fica_1992(>=0)
+                total_der_fica_1993(>=0) total_der_fica_1994(>=0) total_der_fica_1995(>=0)
+                total_der_fica_1996(>=0) total_der_fica_1997(>=0) total_der_fica_1998(>=0)
+                total_der_fica_1999(>=0) total_der_fica_2000(>=0) total_der_fica_2001(>=0)
+                total_der_fica_2002(>=0) total_der_fica_2003(>=0) total_der_fica_2004(>=0)
+                total_der_fica_2005(>=0) total_der_fica_2006(>=0) total_der_fica_2007(>=0)
+                total_der_fica_2008(>=0) total_der_fica_2009(>=0) total_der_fica_2010(>=0)
+                total_der_fica_2011(>=0) total_der_fica_2012(>=0) total_der_fica_2013(>=0)
+                total_der_fica_2014(>=0);
+*       restrict ;
+        interact race*state, hispanic*state;
+        iterations 5;
+        multiples 4;
+	seed 2001;
+run;

@@ -1,0 +1,204 @@
+
+Read-me file for the SSB 7.0 example programs for handling missing data and 
+	accounting for sample design uncertainty
+
+Created by Evan Totty
+Last updated: November 2, 2018
+
+
+----------------------------------------------------------------------------------
+SUMMARY:
+
+The programs herein provide examples of how to address missing data and how to 
+	generate replicate weights in the SSB 7.0. These example programs are 
+	applied to two different applications. 
+
+The missing data methods include sequential regression multivariate imputation 
+	("SRMI", via software program IVEware) and raking (based on the available 
+	cases, but bringing the marginal population totals back into agreement 
+	with national totals). [Available case analysis without any raking 
+	adjustments constitutes a third option for handling missing data that 
+	is shown in the example applications, but is performed automatically 
+	in SAS and Stata.]
+
+The replicate weights can be used instead of standard asymptotic formulas to 
+	construct standard errors. This method may be more accurate, particularly 
+	when the survey design is stratified according various socio-economic and 
+	geographic characteristics; these sampling designs can be incorporated 
+	into the replicate weights, but are not accounted for in standard variance 
+	formulas.
+
+IVEware is a software program developed by researchers at the Survey Methodology
+	Program, Survey Research Center, Institute for Social Research, 
+	University of Michigan. The software can perform, among other things, 
+	multiple imputation of missing data using SRMI (also known as Chained 
+	Equations). IVEware comes with a set of software programs that can 
+	perform SRMI given a set of input data and modeling instructions. In the 
+	applications described below, a user program specifies the input data 
+	to be imputed, specifies the model settings, then calls the IVEware 
+	software on the server and finally extracts the imputed datasets. More 
+	information on IVEware can be found here: 
+	https://www.src.isr.umich.edu/software/
+
+The two applications are (1) life-cycle earnings profiles, and (2) time between 
+	disability onset and SSDI adjudication separately by gender. 
+
+Application (1) is performed by regressing log annual earnings on age indicators 
+	for individuals in the 1990-2008 SIPP panels who have positive earnings 
+	every year from age 25 to 60. Survey weights are adjusted across SIPP 
+	panels based on the relative size of each panel within the sample. 
+
+Application (2) regresses adjudication wait time (in months) on gender indicators 
+	for individuals in the 1996 SIPP panel.
+
+Example programs for these methods and both applications are written in both 
+	SAS and Stata. The instructions below are the same for both the SAS 
+	and Stata programs, except where specified.
+
+-----------------------------------------------------------------------------------
+DIRECTORY LAYOUT:
+
+From this location, there are two folders: 
+	1. "base_programs” - includes the programs written to perform SRMI, raking, 
+		and generate replicate weights. These programs are written to be 
+		called by a  master program when they are applied to a given 
+		application. Each program is described in more detail below.
+	2. “applications” - shows the base SRMI/raking/replicate weight programs 
+		applied to the two applications described above, including programs 
+		used to perform the analysis for the applications. 
+
+
+
+The “base_programs” folder includes five SAS and five Stata programs that perform functions 
+	related to imputation, raking, and generating replicate weights. These programs 
+	are written to be used with a master program that has already pulled the desired 
+	sample and variables from the SSB and saved them as named in the base 
+	programs. 
+
+	1. srmi.sas/do – (WILL need to be edited by user) This program uses the 
+		IVEware functionality to impute missing data in the sample/variables 
+		of interest. Step 1 in the program specifies the imputation data and 
+		model settings. The user will need to edit these settings according 
+		to their sample and desired settings. Step 3 includes specifying 
+		post-imputation relationships between variables and will also need to 
+		be edited by the user.
+		***1b. imputeSSB.set - For the Stata programs, an additional 
+			imputeSSB.set program is required, which specifies the 
+			imputation settings and is called by srmi.do. In SAS, 
+			these settings are specified within srmi.sas.
+	2. raking.sas/do – This program rakes the initwgt variable and replicate weights, 
+		such that the marginal weighted totals for the available case sample are 
+		in alignment with marginal totals from a control population dataset. Note, 
+		if the user wants to rake some individuals in a given sample to marginal totals at 
+		different points in time (e.g., individuals from different SIPP 
+		panels), then the program should be called separately for each panel.
+	3. prepPopControlTotals.sas/do – This program takes a dataset on population totals 
+		and prepares it for use in the raking program.* This involves creating 
+		marginal population totals for various state/sex/race/Hispanic origin/age  
+		categories.** Note that the raking.sas program constructs the same 
+		marginal population totals for the weighted SSB sample.
+	4. genRepWeights.sas/do – This program generates replicate weights for the given sample, 
+		based on the initwgt, halfsamp, and varstrat variables in the SSB data.
+	5. genRepWeightsSRMI.sas/do – This program does the same thing as the above program, 
+		except it is designed for use with srmi.sas/srmi.do such that it loops through 
+		the completed implicates for a given synthetic file and generates the 
+		replicate weights for each completed implicate.
+
+
+
+The “applications” folder includes a sub-folder for each of the two applications 
+	described above. Within the folder for each application, there is a sub-folder 
+	for the SAS versus Stata programs and then another sub-folder for each approach: 
+
+	1. "available_case" - includes the programs used to estimate the results 
+		using the available-case approach (with and without raking 
+		adjustments)
+	2. "impute" - includes the programs used to estimate the results based on 
+		handling missing data via Sequential Regression Multiple Imputation (SRMI) 
+		via IVEware
+
+	Within the folder associated with a given approach are the necessary base programs 
+		described above, tailored to the particular application, and a 
+		master program and analysis program. The master program 
+		specifies the relevant settings, prepares the data, and calls the base 
+		programs. The analysis program performs the analysis for the given application.
+
+
+
+---------------------------------------------------------------------------------------------
+USING THE PROGRAMS:
+
+As described above, the imputation/raking/replicate weight programs are intended to be used 
+	with a master program. The master program as written in the example applications 
+	loops through the synthetic replicates and keeps the sample and variables of interest 
+	for the analysis. It then calls the subsequent imputation/raking/replicate weight 
+	programs.
+
+The example application programs are grouped into two cases: imputation vs available case 
+	analysis (with or without raking). 
+	- For the imputation case, the master program proceeds as follows:
+		1. (For a given synthetic replicate) Keep the sample and variables of 
+			interest from the full synthetic replicate and save as a new dataset.
+		2. Send the data into the srmi.sas program, which multiply imputes the 
+			missing values on the dataset, generating [# of multipes] imputed files 
+			for each synthetic dataset ([# of multiples] is specified in the srmi.sas program).
+		3. Send the imputed dataset into the genRepweightsSRMI.sas program, which 
+			generates replicate weights and attaches them to each dataset.
+		4. Repeat for all 4 synthetic replicates, generating 4*[# of multiples] 
+			total datasets for analysis.
+	- For the available case, the master program proceeds as follows:
+		1. Run the prepPopControlTotals.sas program, which prepares the population 
+			control dataset for use in the raking program.
+		2. (For a given synthetic replicate) Keep the sample and variables of interest 
+			from the full synthetic replicate, drop individuals with missing data 
+			for the variables of interest, and save as a new
+			dataset.
+		3. Send the data into the genRepweights.sas program, which generates 
+			replicate weights and attaches them to the dataset.
+		4. Send the file into the raking program, which rakes both the initwgt 
+			variable and the replicate weights.
+		5. Repeat for all 4 synthetic replicates, generating 4 datasets for analysis.
+
+The output from the master program is a set of completed data implicates (if 
+	missing values are imputed via SRMI) based on the four synthetic 
+	datasets or a set of available-case observation datasets (with raked and 
+	non-raked weights) based on the four synthetic datasets.
+
+Finally, analysis is performed in the "analysis_XXXX" programs, which prepare 
+	data for the regressions, peform the regressions and save the results 
+	on each implicate, combine the results across implicates and round the 
+	results, and then graph the final results.
+
+
+
+
+
+
+
+
+* The applications described above used U.S. population data from the Survey of 
+	Epidemiology and End Results (SEER), provided on the website of the National 
+	Bureau of Economic Research (NBER). Users may use the same SEER dataset available 
+	on the NBER website that was used for the analysis below: “usrace19agesadj.sas7bdat,” 
+	which corresponds to the “All States Combined (Adjusted) – County – 19 Age Groups – 
+	1990- - 4 Expanded Races by Origin” dataset on the NBER website. If users do choose 
+	to use this dataset along with the “prepPopControlTotals.sas” and “raking.sas” 
+	programs to rake to a post-1989 U.S. population total, then the user only needs to 
+	specify the year to which the weights will be raked within the master program. 
+
+	The data is located here: 
+	http://data.nber.org/data/seer_u.s._county_population_data.html. It includes annual 
+	U.S. population data by state/sex/race/Hispanic origin/age beginning in 1990 and 
+	provides all of the detail needed to run the raking program provided. If users need 
+	to rake weights to match pre-1990 U.S. population data, they will need to either 
+	find population data stratified by each of these categories elsewhere and adjust 
+	the variable names in the “prepPopControlTotals.sas” program accordingly or use 
+	the available SEER data without Hispanic origin for earlier years and adjust the 
+	“prepPopControlTotals.sas” and “raking.sas” programs accordingly. 
+
+** The raking program was written to be similar to the raking programs used for creating 
+	the original SIPP weights. Thus, choices such as which variables, variable values, 
+	and cross-classifications to use for constructing the marginal totals to which the 
+	base weights are raked were largely based on similarity to SIPP programs, 
+	availability of SIPP variables in the SSB, and availability of U.S. population 
+	data for the necessary cross-classifications.  
