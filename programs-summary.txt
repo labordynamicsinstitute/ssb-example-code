@@ -3,7 +3,7 @@ Read-me file for the SSB 7.0 example programs for handling missing data and
 	accounting for sample design uncertainty
 
 Created by Evan Totty
-Last updated: November 2, 2018
+Last updated: December 7, 2018
 
 
 ----------------------------------------------------------------------------------
@@ -133,6 +133,11 @@ As described above, the imputation/raking/replicate weight programs are intended
 	loops through the synthetic replicates and keeps the sample and variables of interest 
 	for the analysis. It then calls the subsequent imputation/raking/replicate weight 
 	programs.
+	
+The programs are written assuming that the user has created three directories within their 
+	desired user directory: (1) "/programs" where these programs are stored and run, 
+	(2) "/mydata" where intermediary datasets are stored, and (3) "/outptu" where the 
+	final output will be stored.
 
 The example application programs are grouped into two cases: imputation vs available case 
 	analysis (with or without raking). 
