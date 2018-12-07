@@ -2,7 +2,6 @@
 Read-me file for the SSB 7.0 example programs for handling missing data and 
 	accounting for sample design uncertainty
 
-Created by Evan Totty
 Last updated: December 7, 2018
 
 
@@ -66,6 +65,9 @@ From this location, there are two folders:
 	2. “applications” - shows the base SRMI/raking/replicate weight programs 
 		applied to the two applications described above, including programs 
 		used to perform the analysis for the applications. 
+	3. "srclib" - contains the IVEware programs used to multipy-impute data. The 
+		programs described below that use IVEware will need to point to the 
+		appropriate SAS or Stata directory within this location.
 
 
 
