@@ -1,0 +1,24 @@
+%macro copylst;
+  %if (%sysfunc(filename(lstref, &path..lst)) eq 0) %then %do;
+    %let file = %sysfunc(fopen(&lstref));
+    %if (&file ne 0) %then %do;
+      %let rc = %sysfunc(fclose(&file));
+      %put Copy list.;
+      data _null_;
+        file print notitles linesize=133;
+        infile "&path..lst" length=len end=test;
+        do until (test eq 1);
+          input line $varying133. len;
+          if (substr(line, 1, 1) eq byte(12)) then do;
+            len = len - 1;
+            line = substr(line, 2, len);
+            put _page_ line $varying133. len;
+          end;
+          else put line $varying133. len;
+        end;
+        output;
+      run;
+    %end;
+  %end;
+%mend copylst;
+

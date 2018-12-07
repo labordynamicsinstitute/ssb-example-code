@@ -1,0 +1,9 @@
+<settings>
+  <frameworks>
+    <gnuplot path="gnuplot" />
+    <r path="R" />
+    <sas path="sas" />
+    <spss path="spss" />
+    <stata path="stata" />
+  </frameworks>
+</settings>
