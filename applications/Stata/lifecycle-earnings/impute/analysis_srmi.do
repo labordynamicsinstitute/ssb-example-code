@@ -64,6 +64,7 @@ forvalues m=1/$multiples {
 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIE SIZE OF EACH PANEL
 */
 use ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
+keep if male==1
 fcollapse (count) panel_tot=personid, by(panel) fast
 keep panel panel_tot
 egen tot=total(panel_tot)
@@ -72,6 +73,7 @@ compress
 save ${mydata}/temp_panel_size.dta, replace
 
 use ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
+keep if male==1
 merge m:1 panel using ${mydata}/temp_panel_size.dta, gen(_mergePanelSize) keepusing(PanelSize)
 gen initwgt_reweight=initwgt*(1/PanelSize)
 forvalues r=1/108 {
@@ -120,6 +122,7 @@ gen age=year-year(birthdate)
 keep if age>=25 & age<=60
 gen log_total_der_fica=log(total_der_fica)
 svyset halfsamp [pw=initwgt_reweight], strata(varstrat) brrweight(repweight_reweight*) fay(0.5)
+compress
 save ${mydata}/ssb_imputed_repw_long_reg`k'_`m'.dta, replace
 
 

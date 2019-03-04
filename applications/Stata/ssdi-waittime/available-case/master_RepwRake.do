@@ -39,6 +39,7 @@ Output files: available-case dataset of SSB/GSF variables for each data file, wi
 SET PATHS FOR SSB/GSF DATA AND USER DATA FILES
 */
 ***USER MUST EDIT THESE SETTINGS***
+global base /rdcprojects/co/co00517/SSB
 global version v7.0
 global myid specXXX
 

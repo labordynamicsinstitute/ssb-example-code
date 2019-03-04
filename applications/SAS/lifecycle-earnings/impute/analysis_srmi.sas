@@ -58,13 +58,17 @@ libname mydata "&base./programs/users/&myid./examples/mydata";
 %do m=1 %to &nm;
 
 /*/ 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIVE SIZE OF EACH PANEL /*/
-proc summary data= mydata.ssb_imputed_repw&k._&m.;
+data ssb_imputed_repw&k._&m.;
+set mydata.ssb_imputed_repw&k._&m.(where=(male=1));
+run;
+
+proc summary data= ssb_imputed_repw&k._&m.;
 class panel;
 var personid;
 output out=mydata.temp_panel_size(keep=panel panel_tot) n=panel_tot;
 run;
 
-proc summary data= mydata.ssb_imputed_repw&k._&m.;
+proc summary data= ssb_imputed_repw&k._&m.;
 var personid;
 output out=mydata.temp_total_size(keep=panel tot) n=tot;
 run;
@@ -83,12 +87,12 @@ set mydata.relative_size;
 PanelSize=panel_tot/tot;
 run;
 
-proc sort data=mydata.ssb_imputed_repw&k._&m.;
+proc sort data=ssb_imputed_repw&k._&m.;
 by panel;
 run;
 
 data mydata.ssb_imputed_repw_reweight&k._&m.;
-merge mydata.ssb_imputed_repw&k._&m. mydata.relative_size;
+merge ssb_imputed_repw&k._&m. mydata.relative_size;
 by panel;
 run;
 
