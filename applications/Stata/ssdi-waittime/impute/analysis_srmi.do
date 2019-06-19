@@ -49,7 +49,6 @@ global replicates 4 /* "4" for synthetic, "1" for validation */
 
 
 
-
 *loop through SSB/GSF data files
 forvalues k=1/$replicates {
 *loop through completed files
@@ -63,7 +62,7 @@ use ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
 gen black=0
 replace black=1 if race==2
 gen otherrace=0
-replace otherrace=1 if race==2
+replace otherrace=1 if race==3
 
 gen female=0
 replace female=1 if male==0

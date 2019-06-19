@@ -36,7 +36,6 @@ USER MUST EDIT THE DATA AND OUTPUT PATHS BELOW AND THE DATA TYPE AND NUMBER OF R
 /*
 Set paths
 */
-global base /rdcprojects/co/co00517/SSB
 global version v7.0
 global myid specXXX
 
@@ -45,7 +44,6 @@ global mydata "${base}/programs/users/${myid}/example/mydata"
 
 global data SSB  /* "SSB" for synthetic data, "GSF" for internal validation */
 global replicates 4  /* "4" for synthetic data, "1" for internal validation */
-
 
 
 
@@ -60,7 +58,7 @@ use ${mydata}/ssb_available_repw_rake`k'.dta, clear
 gen black=0
 replace black=1 if race==2
 gen otherrace=0
-replace otherrace=1 if race==2
+replace otherrace=1 if race==3
 
 gen female=0
 replace female=1 if male==0

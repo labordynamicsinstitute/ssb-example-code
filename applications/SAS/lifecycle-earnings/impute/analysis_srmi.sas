@@ -45,8 +45,7 @@ libname mydata "&base./programs/users/&myid./examples/mydata";
 %let outpath=&base./programs/users/&myid./examples/output;
 *specify number of multiples and replicates. multiples is specified in srmi program. replicates is 4 for synthetic data and 1 for validation;
 %let multiples=4;
-%let replicates=4; 
-
+%let replicates=4;
 
 
 
@@ -59,7 +58,7 @@ libname mydata "&base./programs/users/&myid./examples/mydata";
 
 /*/ 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIVE SIZE OF EACH PANEL /*/
 data ssb_imputed_repw&k._&m.;
-set mydata.ssb_imputed_repw&k._&m.(where=(male=1));
+set mydata.ssb_imputed_repw&k._&m.;
 run;
 
 proc summary data= ssb_imputed_repw&k._&m.;
@@ -155,6 +154,7 @@ run;
 data temp&k._&m.;
 set temp&k._&m.;
 age=year-year(birthdate);
+if male=1 and race=1 and hispanic=0 and foreign_born=0 and panel>=1990 and panel<=1993 and age>=25 and age<=60 then output;
 run;
 
 
@@ -166,7 +166,6 @@ run;
 proc surveyreg data=temp&k._&m. varmethod=BRR(FAY=.5);
 class age;
 model log_total_der_fica_ = age / solution noint;
-where age>=25 & age<=60 & panel>=1990;
 weight initwgt_reweight;
 repweights repweight_reweight1-repweight_reweight108;
 ods output ParameterEstimates = LCoutput&k._&m.;
@@ -189,7 +188,6 @@ run;
 proc glm data=temp&k._&m.;
 class age;
 model log_total_der_fica_ = age / solution noint;
-where age>=25 & age<=60 & panel>=1990;
 weight initwgt_reweight;
 ods output ParameterEstimates = LCoutputNorepw&k._&m.;
 run;

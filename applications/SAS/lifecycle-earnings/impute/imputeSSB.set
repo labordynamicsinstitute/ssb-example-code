@@ -34,4 +34,5 @@
         interact race*state, hispanic*state;                                                                                                                    
 	iterations 5;                                                                                                                                                  
         multiples 4;                                                                                                                                            
+	seed 2001;
 run;                                                                                                                                                            

@@ -37,7 +37,6 @@ STEPS:
 USER NEEDS TO EDIT THE DATA AND OUTPUT PATHS BELOW AND THE NUMBER OF REPLICATES
 /*/
 
-
 %let base=/rdcprojects/co/co00517/SSB;
 %let version=v7.0;
 %let myid=specXXX;
@@ -50,14 +49,13 @@ libname mydata "&base./programs/users/&myid./examples/mydata";
 
 
 
-
 *loop through each data file to reweight, reshape, create new variables, and run analysis;
 %macro loops(ns);
 %do k=1 %to &ns;
 
 /*/ 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIVE SIZE OF EACH PANEL /*/
 data ssb_available_repw_rake&k.;
-set mydata.ssb_available_repw_rake&k.(where=(male=1));
+set mydata.ssb_available_repw_rake&k.;
 run;
 
 proc summary data= ssb_available_repw_rake&k.;
@@ -162,6 +160,7 @@ run;
 data temp&k.;
 set temp&k.;
 age=year-year(birthdate);
+if male=1 and race=1 and hispanic=0 and foreign_born=0 and panel>=1990 and panel<=1993 and age>=25 and age<=60 then output;
 run;
 
 
@@ -173,7 +172,6 @@ run;
 proc glm data=temp&k.;
 class age;
 model log_total_der_fica_ = age / solution noint;
-where age>=25 & age<=60 & panel>=1990;
 weight finalinitwgt_reweight;
 ods output ParameterEstimates = LCoutput_NorepwRake&k.;
 run;
@@ -195,7 +193,6 @@ run;
 proc surveyreg data=temp&k. varmethod=BRR(FAY=.5);
 class age;
 model log_total_der_fica_ = age / solution noint;
-where age>=25 & age<=60 & panel>=1990;
 weight finalinitwgt_reweight;
 repweights finalrepwgt_reweight1-finalrepwgt_reweight108;
 ods output ParameterEstimates = LCoutput_RepwRake&k.;

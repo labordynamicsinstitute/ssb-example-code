@@ -63,8 +63,9 @@ forvalues m=1/$multiples {
 /* 
 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIE SIZE OF EACH PANEL
 */
-use ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
-keep if male==1
+use male race hispanic foreign_born personid panel using ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
+keep if male==1 & race==1 & hispanic==0 & foreign_born==0 & panel>=1990 & panel<=1993
+drop male race hispanic foreign_born
 fcollapse (count) panel_tot=personid, by(panel) fast
 keep panel panel_tot
 egen tot=total(panel_tot)
@@ -73,7 +74,8 @@ compress
 save ${mydata}/temp_panel_size.dta, replace
 
 use ${mydata}/ssb_imputed_repw`k'_`m'.dta, clear
-keep if male==1
+keep if male==1 & race==1 & hispanic==0 & foreign_born==0 & panel>=1990 & panel<=1993
+drop male race hispanic foreign_born
 merge m:1 panel using ${mydata}/temp_panel_size.dta, gen(_mergePanelSize) keepusing(PanelSize)
 gen initwgt_reweight=initwgt*(1/PanelSize)
 forvalues r=1/108 {
@@ -139,18 +141,15 @@ matrix varcov=e(V)
 matrix var=vecdiag(varcov)'
 matrix LCoutput`k'_`m'=(beta,var)
 matrix colnames LCoutput`k'_`m' = beta`k'_`m' var`k'_`m'
-preserve
-{
+
 clear
 set obs 36
 gen N`k'_`m'=.
 replace N`k'_`m'=`N'
 svmat LCoutput`k'_`m', names(col)
 save ${mydata}/LCoutput`k'_`m'.dta, replace
-}
-restore
 
-
+use ${mydata}/ssb_imputed_repw_long_reg`k'_`m'.dta, clear
 svy brr: reg log_total_der_fica ibn.age, noc
 local N=e(N)
 matrix beta=e(b)'
@@ -158,16 +157,13 @@ matrix varcov=e(V)
 matrix var=vecdiag(varcov)'
 matrix LCoutputNorepw`k'_`m'=(beta,var)
 matrix colnames LCoutputNorepw`k'_`m' = beta`k'_`m' var`k'_`m'
-preserve
-{
+
 clear
 set obs 36
 gen N`k'_`m'=.
 replace N`k'_`m'=`N'
 svmat LCoutputNorepw`k'_`m', names(col)
 save ${mydata}/LCoutputNorepw`k'_`m'.dta, replace
-}
-restore
 
 
 }

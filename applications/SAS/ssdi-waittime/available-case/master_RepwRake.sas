@@ -118,7 +118,7 @@ run;
 
 
 /*/ 3. CREATE REPLICATE WEIGHTS /*/
-%include "genRepweights.sas";
+%include "genRepWeights.sas";
 
 
 

@@ -42,7 +42,7 @@ global inputs "${base}/data/${version}"
 global dataname ssb_v7_0_synthetic /* ssb_v7_0_synthetic for SSB, ssb_v7_0_gsf_snapshot for GSF */
 global replicates 4 /* "4" for synthetic data, "1" for internal */
 *Set IVEware use: path to srclib folder where IVEware Stata commands are saved
-global srclib ""
+global srclib "/rdcprojects/co/co00517/SSB/programs/ssb-example-code/srclib/v3/stata/"
 
 
 

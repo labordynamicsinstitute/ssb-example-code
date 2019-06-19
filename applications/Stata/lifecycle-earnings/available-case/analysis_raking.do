@@ -58,8 +58,9 @@ forvalues k=1/$replicates {
 /* 
 1. ADJUST THE PERSON WEIGHTS FOR THE RELATIVE SIZE OF EACH PANEL
 */
-use ${mydata}/ssb_available_repw_rake`k'.dta, clear
-keep if male==1
+use male race hispanic foreign_born personid panel using ${mydata}/ssb_available_repw_rake`k'.dta, clear
+keep if male==1 & race==1 & hispanic==0 & foreign_born==0 & panel>=1990 & panel<=1993
+drop male race hispanic foreign_born
 fcollapse (count) panel_tot=personid, by(panel) fast
 keep panel panel_tot
 egen tot=total(panel_tot)
@@ -67,8 +68,9 @@ gen PanelSize=panel_tot/tot
 compress
 save ${mydata}/temp_panel_size.dta, replace
 
-use ${mydata}/ssb_available_repw_rake`k'.dta, clear
-keep if male==1
+use male race hispanic foreign_born panel initwgt* repweight* total_der_fica* birthdate varstrat halfsamp using ${mydata}/ssb_available_repw_rake`k'.dta, clear
+keep if male==1 & race==1 & hispanic==0 & foreign_born==0 & panel>=1990 & panel<=1993
+drop male race hispanic foreign_born
 merge m:1 panel using ${mydata}/temp_panel_size.dta, gen(_mergePanelSize)
 gen initwgt_reweight=initwgt*(1/PanelSize)
 gen finalinitwgt_reweight=finalinitwgt*(1/PanelSize)

@@ -46,7 +46,7 @@ libname mydata "&base./programs/users/&myid./examples/mydata";
 %let dataname=ssb_v7_0_synthetic; *ssb_v7_0_synthetic for SSB, ssb_v7_0_gsf_snapshot for GSF;
 %let replicates=4; *"4" for synthetic data, "1" for internal;
 *Set IVEware use: path to srclib folder where IVEware SAS commands are saved and sasautos line;
-options set = SRCLIB ''
+options set = SRCLIB '/rdcprojects/co/co00517/SSB/programs/ssb-example-code/srclib/v3/sas/'
         sasautos = ('!SRCLIB' '!SASROOT/sasautos') mautosource;
 
 
@@ -100,7 +100,7 @@ quit;
 
 
 /*/ 3. SEND VARIABLES INTO REPLICATE WEIGHTS GENERATION PROGRAM /*/
-%include "genRepweightsSRMI.sas";
+%include "genRepWeightsSRMI.sas";
 
 
 
