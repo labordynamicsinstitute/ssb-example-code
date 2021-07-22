@@ -203,7 +203,7 @@ DFcomp1=(1+(1/&multiples.))*MeanSynthVariance+VarianceAvg;
 DFcomp2=(1/4)*VarianceSynthMeans;
 DegreesFreedom=3*(1+(DFcomp1/DFcomp2))**2;
 
-critval=tinv(.95,DegreesFreedom);
+critval=tinv(.975,DegreesFreedom);
 StdErr=SQRT(TotalVariance);
 CIlower=PointEstimate-critval*StdErr;
 CIupper=PointEstimate+critval*StdErr;
@@ -225,7 +225,7 @@ DFcomp1=VarianceAvg;
 DFcomp2=(1+(1/&multiples.))*VarImpMeans;
 DegreesFreedom=(&multiples.-1)*(1+(DFcomp1/DFcomp2))**2;
 
-critval=tinv(.95,DegreesFreedom);
+critval=tinv(.975,DegreesFreedom);
 StdErr=SQRT(TotalVariance);
 CIlower=PointEstimate-critval*StdErr;
 CIupper=PointEstimate+critval*StdErr;
