@@ -159,9 +159,9 @@ foreach out of local outcomes {
         gen Tstat=Beta/SE
         egen N=rowmean(N1_1 N1_2 N1_3 N1_4)
         gen df=($multiples-1)*(1+(meanvar)/((1+(1/$multiples))*betavar))^2
-        gen criticalvalue95=invttail(df,.05)
-        gen criticalvalue90=invttail(df,.10)
-        gen criticalvalue99=invttail(df,.01)
+        gen criticalvalue95=invttail(df,.025)
+        gen criticalvalue90=invttail(df,.05)
+        gen criticalvalue99=invttail(df,.005)
         gen CIUpper95=Beta+SE*criticalvalue95
         gen CILower95=Beta-SE*criticalvalue95
 
@@ -213,9 +213,9 @@ foreach out of local outcomes {
         gen dfcomp1=(1+1/$multiples)*meanvars+meanvar
         gen dfcomp2=(1/$replicates)*varmeans
         gen df=($replicates-1)*((1+dfcomp1/dfcomp2)^2)
-        gen criticalvalue95=invttail(df,.05)
-        gen criticalvalue90=invttail(df,.10)
-        gen criticalvalue99=invttail(df,.01)
+        gen criticalvalue95=invttail(df,.025)
+        gen criticalvalue90=invttail(df,.05)
+        gen criticalvalue99=invttail(df,.005)
         gen CIUpper95=Beta+SE*criticalvalue95
         gen CILower95=Beta-SE*criticalvalue95
 
