@@ -227,9 +227,9 @@ foreach out of local outcomes {
         gen Tstat=Beta/SE
         egen N=rowmean(N1 N2 N3 N4)
         gen df=($replicates-1)*(1+meanvar/((1/$replicates)*varmeans))^2
-        gen criticalvalue95=invttail(df,.05)
-        gen criticalvalue90=invttail(df,.10)
-        gen criticalvalue99=invttail(df,.01)
+        gen criticalvalue95=invttail(df,.025)
+        gen criticalvalue90=invttail(df,.05)
+        gen criticalvalue99=invttail(df,.005)
         gen CIUpper95=Beta+SE*criticalvalue95
         gen CILower95=Beta-SE*criticalvalue95
 
